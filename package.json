@@ -1,14 +1,14 @@
 {
-    "name": "blitz3d",
-    "displayName": "Blitz3D",
+    "name": "blitzforge",
+    "displayName": "BlitzForge",
     "author": {
-        "name": "dones"
+        "name": "RydeTec"
     },
-    "publisher": "dones",
-    "description": "Language support for BlitzBasic included in Blitz3D.",
+    "publisher": "RydeTec",
+    "description": "Language support for BlitzForge.",
     "repository": {
         "type": "git",
-        "url": "https://github.com/denesfilotas/vscode-blitz3d.git"
+        "url": "https://github.com/RydeTec/vscode-blitz-forge.git"
     },
     "version": "0.9.3",
     "engines": {
@@ -22,17 +22,18 @@
     "contributes": {
         "languages": [
             {
-                "id": "blitz3d",
+                "id": "blitzforge",
                 "aliases": [
-                    "BlitzBasic",
-                    "Blitz3D"
+                    "BlitzForge",
+                    "Blitz3D",
+                    "BlitzBasic"
                 ],
                 "extensions": [
                     "bb",
                     "bb_bak1",
                     "bb_bak2"
                 ],
-                "configuration": "./configurations/blitz3d.language-configuration.json"
+                "configuration": "./configurations/blitzforge.language-configuration.json"
             },
             {
                 "id": "blitz3d-decls",
@@ -47,9 +48,9 @@
         ],
         "grammars": [
             {
-                "language": "blitz3d",
+                "language": "blitzforge",
                 "scopeName": "source.bb",
-                "path": "./syntaxes/blitz3d.tmLanguage.json"
+                "path": "./syntaxes/blitzforge.tmLanguage.json"
             },
             {
                 "language": "blitz3d-decls",
@@ -63,41 +64,41 @@
         ],
         "snippets": [
             {
-                "language": "blitz3d",
+                "language": "blitzforge",
                 "path": "./snippets/snippets.code-snippets"
             }
         ],
         "commands": [
             {
                 "title": "Debug open file",
-                "category": "Blitz3D",
-                "command": "extension.blitz3d.debug",
-                "enablement": "editorLangId == blitz3d"
+                "category": "BlitzForge",
+                "command": "extension.blitzforge.debug",
+                "enablement": "editorLangId == blitzforge"
             },
             {
                 "title": "Run open file without debugging",
-                "category": "Blitz3D",
-                "command": "extension.blitz3d.run",
-                "enablement": "editorLangId == blitz3d"
+                "category": "BlitzForge",
+                "command": "extension.blitzforge.run",
+                "enablement": "editorLangId == blitzforge"
             },
             {
                 "title": "Generate BlitzDoc stubs",
-                "category": "Blitz3D",
-                "command": "extension.blitz3d.generatestubs"
+                "category": "BlitzForge",
+                "command": "extension.blitzforge.generatestubs"
             },
             {
                 "title": "Open Example",
-                "category": "Blitz3D",
-                "command": "extension.blitz3d.openExample"
+                "category": "BlitzForge",
+                "command": "extension.blitzforge.openExample"
             }
         ],
         "debuggers": [
             {
-                "type": "blitz3d",
+                "type": "blitzforge",
                 "languages": [
-                    "blitz3d"
+                    "blitzforge"
                 ],
-                "label": "Debug Blitz3D",
+                "label": "Debug BlitzForge",
                 "program": "../out/debug.js",
                 "runtime": "node",
                 "configurationAttributes": {
@@ -108,7 +109,7 @@
                         "properties": {
                             "bbfile": {
                                 "type": "string",
-                                "description": "Blitz3D program to run",
+                                "description": "BlitzForge program to run",
                                 "default": ""
                             }
                         }
@@ -121,7 +122,7 @@
                         "properties": {
                             "bbfile": {
                                 "type": "string",
-                                "description": "Blitz3D program to build",
+                                "description": "BlitzForge program to build",
                                 "default": ""
                             },
                             "outfile": {
@@ -134,7 +135,7 @@
                 },
                 "initialConfigurations": [
                     {
-                        "type": "blitz3d",
+                        "type": "blitzforge",
                         "request": "launch",
                         "name": "Run blitz program",
                         "bbfile": "${file}"
@@ -142,20 +143,20 @@
                 ],
                 "configurationSnippets": [
                     {
-                        "label": "Blitz3D: Debug",
+                        "label": "BlitzForge: Debug",
                         "description": "New configuration for debugging bb files",
                         "body": {
-                            "type": "blitz3d",
+                            "type": "blitzforge",
                             "request": "launch",
                             "name": "${1:Debug blitz program}",
                             "bbfile": "${2:main.bb}"
                         }
                     },
                     {
-                        "label": "Blitz3D: Build",
+                        "label": "BlitzForge: Build",
                         "description": "New configuration for building executables from bb files",
                         "body": {
-                            "type": "blitz3d",
+                            "type": "blitzforge",
                             "request": "build",
                             "name": "${1:Build blitz program}",
                             "bbfile": "${2:main.bb}",
@@ -167,16 +168,16 @@
         ],
         "configuration": [
             {
-                "title": "Blitz3D installation",
+                "title": "BlitzForge installation",
                 "properties": {
-                    "blitz3d.installation.BlitzPath": {
+                    "blitzforge.installation.BlitzPath": {
                         "type": "string",
-                        "description": "Root of Blitz3D installation, containing the bin folder.",
-                        "default": "C:\\Program Files (x86)\\Blitz3D"
+                        "description": "Root of BlitzForge installation, containing the bin folder.",
+                        "default": ".\\compiler\\BlitzForge"
                     },
-                    "blitz3d.installation.SyntaxVersion": {
+                    "blitzforge.installation.SyntaxVersion": {
                         "type": "string",
-                        "description": "Version of the language syntax (Blitz3D version)",
+                        "description": "Version of the language syntax (BlitzForge version)",
                         "enum": [
                             "Legacy",
                             "v1.117",
@@ -194,11 +195,11 @@
             {
                 "title": "Outline View",
                 "properties": {
-                    "blitz3d.outline.ClassicOutlineSymbols": {
+                    "blitzforge.outline.ClassicOutlineSymbols": {
                         "type": "boolean",
                         "description": "Use Blitz3D-style categorized symbols in outline view."
                     },
-                    "blitz3d.outline.ParametersInOutline": {
+                    "blitzforge.outline.ParametersInOutline": {
                         "type": "boolean",
                         "description": "Include function parameters in outline view. Only works if classic view is unset."
                     }
@@ -207,17 +208,17 @@
             {
                 "title": "Editor enhancements",
                 "properties": {
-                    "blitz3d.editor.UseBracketsEverywhere": {
+                    "blitzforge.editor.UseBracketsEverywhere": {
                         "type": "boolean",
                         "description": "Always use brackets on code completion, even after builtin functions where they could be omitted.",
                         "default": true
                     },
-                    "blitz3d.editor.InsertParameterSnippets": {
+                    "blitzforge.editor.InsertParameterSnippets": {
                         "type": "boolean",
                         "description": "Insert a snippet with all parameters on code completion",
                         "default": true
                     },
-                    "blitz3d.editor.UseTodos": {
+                    "blitzforge.editor.UseTodos": {
                         "type": "string",
                         "enum": [
                             "Off",
@@ -237,7 +238,7 @@
             {
                 "title": "Compilation",
                 "properties": {
-                    "blitz3d.compilation.AutoCompilation": {
+                    "blitzforge.compilation.AutoCompilation": {
                         "type": "string",
                         "enum": [
                             "Launch file",
@@ -259,37 +260,22 @@
         ],
         "semanticTokenScopes": [
             {
-                "language": "blitz3d",
+                "language": "blitzforge",
                 "scopes": {
                     "string.link": [
                         "markup.underline.link"
                     ]
                 }
             }
-        ],
-        "configurationDefaults": {
-            "editor.semanticTokenColorCustomizations": {
-                "enabled": true,
-                "rules": {
-                    "*.deprecated:blitz3d": {
-                        "fontStyle": "strikethrough"
-                    }
-                }
-            },
-            "[blitz3d]": {
-                "files.encoding": "windows1250"
-            },
-            "[blitz3d-decls]": {
-                "files.encoding": "windows1250"
-            }
-        }
+        ]
     },
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -watch -p ./"
+        "watch": "tsc -watch -p ./",
+        "build": "vsce package"
     },
     "devDependencies": {
         "@types/node": "^22.10.1",
@@ -301,7 +287,7 @@
     },
     "dependencies": {
         "@vscode/debugadapter": "^1.68.0",
-        "blitz3d": "file:",
+        "blitzforge": "file:",
         "tree-kill": "^1.2.2"
     }
 }

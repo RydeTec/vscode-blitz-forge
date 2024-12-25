@@ -8,11 +8,11 @@ export default function compile(document: vscode.TextDocument) {
 
     compilationErrors.clear();
 
-    const compiletype = vscode.workspace.getConfiguration('blitz3d.compilation').get<string>('AutoCompilation');
+    const compiletype = vscode.workspace.getConfiguration('blitzforge.compilation').get<string>('AutoCompilation');
     if (compiletype == 'None') return;
 
     if (compiletype == 'Open file' || compiletype == 'Both') {
-        if (document.languageId != 'blitz3d') return;
+        if (document.languageId != 'blitzforge') return;
         blitzcc(document.uri);
     }
     if (compiletype == 'Launch file' || compiletype == 'Both') {
@@ -91,7 +91,7 @@ export function showErrorOnCompile(stdout: string, stderr: string) {
                     });
                     break;
                 case 'Go to settings':
-                    vscode.commands.executeCommand('workbench.action.openSettings', 'blitz3d.installation.BlitzPath');
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'blitzforge.installation.BlitzPath');
                     break;
             }
         });
@@ -114,7 +114,7 @@ export function showErrorOnCompile(stdout: string, stderr: string) {
                 return;
         }
         vscode.window.showErrorMessage(msg, 'Go to settings').then(val => {
-            if (val) vscode.commands.executeCommand('workbench.action.openSettings', 'blitz3d.installation.BlitzPath');
+            if (val) vscode.commands.executeCommand('workbench.action.openSettings', 'blitzforge.installation.BlitzPath');
         });
     }
 }

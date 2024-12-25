@@ -18,7 +18,7 @@ export default class SignatureHelpProvider implements vscode.SignatureHelpProvid
         let wend = line.length;
         let pc = 0;
         let ps = [0];
-        const usebrackets = vscode.workspace.getConfiguration('blitz3d.editor').get<boolean>('UseBracketsEverywhere');
+        const usebrackets = vscode.workspace.getConfiguration('blitzforge.editor').get<boolean>('UseBracketsEverywhere');
         chars: for (let i = line.length - 1; i >= 0; i--) {
             const c = line.charAt(i);
             if (c == '"' || isInString(line, i)) continue;

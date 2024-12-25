@@ -31,7 +31,7 @@ function showSampleBrowser(viewpath: string) {
 export default function openExample(command?: string) {
     if (!blitzpath) {
         vscode.window.showErrorMessage('BlitzPath is not set. Please set BlitzPath as environment variable or in the extension settings.', 'Go to settings')
-            .then(value => { if (value) vscode.commands.executeCommand('workbench.action.openSettings', 'blitz3d.installation.BlitzPath'); });
+            .then(value => { if (value) vscode.commands.executeCommand('workbench.action.openSettings', 'blitzforge.installation.BlitzPath'); });
         return;
     }
     const cpath = path.join(blitzpath, 'help', 'commands') + path.sep;

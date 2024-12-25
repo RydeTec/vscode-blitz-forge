@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(compile));
     context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(e => {
-        if (e.document.languageId == 'blitz3d') {
+        if (e.document.languageId == 'blitzforge') {
             updateContext(e.document);
             updateTodos(e.document);
         } else if (e.document.languageId == 'blitz3d-decls') {
@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(document => {
-        if (document.languageId == 'blitz3d') {
+        if (document.languageId == 'blitzforge') {
             initializeContext();
             updateContext(document);
             updateTodos(document);
@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
-        if (editor?.document.languageId == 'blitz3d') {
+        if (editor?.document.languageId == 'blitzforge') {
             initializeContext();
             updateContext(editor.document);
             updateTodos(editor.document);
@@ -65,43 +65,43 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Commands
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.blitz3d.debug', () => {
+        vscode.commands.registerCommand('extension.blitzforge.debug', () => {
             let term = vscode.window.createTerminal("blitzcc");
             term.show();
             term.sendText('blitzcc -d "' + vscode.window.activeTextEditor?.document.fileName + '"');
         })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.blitz3d.run', () => {
+        vscode.commands.registerCommand('extension.blitzforge.run', () => {
             let term = vscode.window.createTerminal('blitzcc');
             term.show();
             term.sendText('blitzcc "' + vscode.window.activeTextEditor?.document.fileName + '"');
         })
     );
-    context.subscriptions.push(vscode.commands.registerCommand('extension.blitz3d.openExample', openExample));
-    context.subscriptions.push(vscode.commands.registerCommand('extension.blitz3d.generatestubs', generateStubs));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.blitzforge.openExample', openExample));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.blitzforge.generatestubs', generateStubs));
 
     // Providers
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('blitz3d', new BlitzConfigurationProvider()));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('blitz3d', new DebugAdapterDescriptorFactory()));
-    context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider('blitz3d', new BlitzSemanticTokensProvider(), legend));
-    context.subscriptions.push(vscode.languages.registerHoverProvider('blitz3d', new BlitzHoverProvider()));
-    context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(['blitz3d', 'blitz3d-decls'], new DocumentSymbolProvider()));
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('blitz3d', new CompletionItemProvider(), '.', '\\'));
-    context.subscriptions.push(vscode.languages.registerDefinitionProvider('blitz3d', new DefinitionProvider()));
-    context.subscriptions.push(vscode.languages.registerSignatureHelpProvider('blitz3d', new SignatureHelpProvider(), '(', ' '));
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('blitzforge', new BlitzConfigurationProvider()));
+    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('blitzforge', new DebugAdapterDescriptorFactory()));
+    context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider('blitzforge', new BlitzSemanticTokensProvider(), legend));
+    context.subscriptions.push(vscode.languages.registerHoverProvider('blitzforge', new BlitzHoverProvider()));
+    context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(['blitzforge', 'blitz3d-decls'], new DocumentSymbolProvider()));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('blitzforge', new CompletionItemProvider(), '.', '\\'));
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider('blitzforge', new DefinitionProvider()));
+    context.subscriptions.push(vscode.languages.registerSignatureHelpProvider('blitzforge', new SignatureHelpProvider(), '(', ' '));
     context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('bbdoc', new TextDocumentContentProvider()));
-    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider('blitz3d', new DocumentFormattingEditProvider()));
-    context.subscriptions.push(vscode.languages.registerTypeDefinitionProvider('blitz3d', new TypeDefinitionProvider()));
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider('blitzforge', new DocumentFormattingEditProvider()));
+    context.subscriptions.push(vscode.languages.registerTypeDefinitionProvider('blitzforge', new TypeDefinitionProvider()));
 
     // Configurations
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
-        if (event.affectsConfiguration('blitz3d.editor.UseBracketsEverywhere')) {
+        if (event.affectsConfiguration('blitzforge.editor.UseBracketsEverywhere')) {
             vscode.window.showWarningMessage('Bracket snippets need to be updated. Reload window for changes to take effect', 'Reload')
                 .then((resp) => { if (resp) vscode.commands.executeCommand('workbench.action.reloadWindow'); });
         }
-        if (event.affectsConfiguration('blitz3d.installation.BlitzPath')) updateBlitzPath(true);
+        if (event.affectsConfiguration('blitzforge.installation.BlitzPath')) updateBlitzPath(true);
         initializeContext();
     }));
-    console.log('Blitz3D extension activated.');
+    console.log('BlitzForge extension activated.');
 }

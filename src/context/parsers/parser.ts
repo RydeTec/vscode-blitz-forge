@@ -9,7 +9,7 @@ export interface Parser {
 }
 
 export function getParser(bbtext: string, bburi: vscode.Uri): Parser {
-    switch (vscode.workspace.getConfiguration('blitz3d.installation').get('SyntaxVersion')) {
+    switch (vscode.workspace.getConfiguration('blitzforge.installation').get('SyntaxVersion')) {
         case 'v1.117': return new Blitz117Parser(bbtext, bburi);
         default: return new BlitzLegacyParser(bbtext, bburi);
     }

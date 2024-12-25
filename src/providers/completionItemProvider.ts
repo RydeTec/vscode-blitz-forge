@@ -74,8 +74,8 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
         if (pwr && document.getText(pwr).match(/^(function|type|local|global|const|dim|field)$/i)) return;
 
         // general IntelliSense
-        const useSnippets = vscode.workspace.getConfiguration('blitz3d.editor').get<boolean>('InsertParameterSnippets');
-        const usebrackets = vscode.workspace.getConfiguration('blitz3d.editor').get<boolean>('UseBracketsEverywhere');
+        const useSnippets = vscode.workspace.getConfiguration('blitzforge.editor').get<boolean>('InsertParameterSnippets');
+        const usebrackets = vscode.workspace.getConfiguration('blitzforge.editor').get<boolean>('UseBracketsEverywhere');
         for (const fun of parsed.funcs.concat(userLibs)) {
             const snip = new vscode.SnippetString(fun.name + (fun.tag || usebrackets ? '(' : ' '));
             if (useSnippets) {

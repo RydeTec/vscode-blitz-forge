@@ -4,7 +4,7 @@ import { analyzed, parsed, userLibs } from '../context/context';
 export default class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
     provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.DocumentSymbol[]> {
-        const classicSymbols = vscode.workspace.getConfiguration('blitz3d.outline').get<boolean>('ClassicOutlineSymbols');
+        const classicSymbols = vscode.workspace.getConfiguration('blitzforge.outline').get<boolean>('ClassicOutlineSymbols');
         if (classicSymbols) {
             const stPos = new vscode.Position(0, 0);
             const endPos = document.lineAt(document.lineCount - 1).range.end;
@@ -33,7 +33,7 @@ export default class DocumentSymbolProvider implements vscode.DocumentSymbolProv
             return [funcscontainer, typescontainer, labelscontainer];
             //return funcs.concat(types).concat(labels);
         }
-        const includeParams = vscode.workspace.getConfiguration('blitz3d.outline').get<boolean>('ParametersInOutline');
+        const includeParams = vscode.workspace.getConfiguration('blitzforge.outline').get<boolean>('ParametersInOutline');
         const symbols: vscode.DocumentSymbol[] = [];
         for (const fun of parsed.funcs.concat(userLibs)) {
             if (fun.uri.path != document.uri.path) continue;

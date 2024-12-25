@@ -9,7 +9,7 @@ export interface Analyzer {
 }
 
 export function getAnalyzer(bbtext: string, bburi: vscode.Uri, parsed: bb.ParseResult): Analyzer {
-    switch(vscode.workspace.getConfiguration('blitz3d.installation').get('SyntaxVersion')) {
+    switch(vscode.workspace.getConfiguration('blitzforge.installation').get('SyntaxVersion')) {
         case 'v1.117': return new Blitz117Analyzer(bbtext, bburi, parsed);
         default: return new BlitzLegacyAnalyzer(bbtext, bburi, parsed);
     }

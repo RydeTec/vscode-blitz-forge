@@ -14,7 +14,7 @@ export function updateStubPath(updatedPath: string) {
         let stubdoc = readFileSync(stubpath);
         stubs = loadDefaultStubs(stubdoc);
     } else {
-        vscode.window.showInformationMessage('Blitz3D builtin keywords are not stored. Generate stubs from your Blitz3D installation.', 'Generate stubs')
+        vscode.window.showInformationMessage('BlitzForge builtin keywords are not stored. Generate stubs from your BlitzForge installation.', 'Generate stubs')
             .then(resp => { if (resp) generateStubs(); });
     }
 }
@@ -124,7 +124,7 @@ function generateStubFromDoc(document: Buffer): BlitzStub {
         declaration: declaration ? declaration : '',
         parameters: parameters,
         description: description,
-        author: ['Blitz3D'],
+        author: ['BlitzForge'],
         return: '',
         since: '',
         example: example
@@ -164,7 +164,7 @@ function loadDefaultStubs(document: Buffer): BlitzStub[] {
             name = removeType(name);
         } else if (line.startsWith('end function')) {
             const snip = new vscode.SnippetString(name);
-            const useBrackets = vscode.workspace.getConfiguration('blitz3d.editor').get<boolean>('UseBracketsEverywhere');
+            const useBrackets = vscode.workspace.getConfiguration('blitzforge.editor').get<boolean>('UseBracketsEverywhere');
             const isKw = isBlitzKeyword(name.split(' ')[0]);
             if ((useBrackets && !isKw) || declaration.substring(9).includes('(')) snip.appendText('(');
             else if (paramLines.length > 0 && !paramLines[0].toLowerCase().includes('none')) snip.appendText(' ');

@@ -12,7 +12,7 @@ import * as bb from './types';
 import { removeType } from '../util/functions';
 
 export let userLibs: bb.Function[] = [];
-export let blitzpath: string = vscode.workspace.getConfiguration('blitz3d.installation').get('BlitzPath') || env['BLITZPATH'] || '';
+export let blitzpath: string = vscode.workspace.getConfiguration('blitzforge.installation').get('BlitzPath') || env['BLITZPATH'] || '';
 export let blitzCmd = blitzpath.length > 0 ? '"' + path.join(blitzpath, 'bin', process.platform === 'win32' ? 'blitzcc.exe' : 'blitzcc') + '"' : 'blitzcc';
 export let builtinFunctions: string[] = [];
 export let builtinFunctionsLower: string[] = [];
@@ -22,7 +22,7 @@ export let analyzer: Analyzer;
 export let analyzed: bb.AnalyzeResult;
 
 export function updateBlitzPath(notify: boolean) {
-    const config: string | undefined = vscode.workspace.getConfiguration('blitz3d.installation').get('BlitzPath');
+    const config: string | undefined = vscode.workspace.getConfiguration('blitzforge.installation').get('BlitzPath');
     blitzpath = config || env['blitzpath'] || '';
     blitzCmd = blitzpath.length > 0 ? '"' + path.join(blitzpath, 'bin', process.platform === 'win32' ? 'blitzcc.exe' : 'blitzcc') + '"' : 'blitzcc';
     if (blitzpath.length > 0) env['blitzpath'] = blitzpath;
@@ -277,7 +277,7 @@ export function initializeContext() {
 }
 
 export function updateContext(document: vscode.TextDocument) {
-    if (document.languageId == 'blitz3d') {
+    if (document.languageId == 'blitzforge') {
         if (parser) {
             parsed = parser.parse(document.getText(), document.uri);
         } else {
@@ -320,7 +320,7 @@ export function obtainWorkingDir(uri: vscode.Uri): string {
     const launchConfigs = config.get<any[]>("configurations");
     if (!launchConfigs) return uri.path.substring(process.platform === 'win32' ? 1 : 0, uri.path.lastIndexOf('/'));
     for (const launch of launchConfigs) {
-        if (launch.type == 'blitz3d' && launch.bbfile) {
+        if (launch.type == 'blitzforge' && launch.bbfile) {
             if (path.isAbsolute(launch.bbfile)) return launch.bbfile;
             const wsFolder = vscode.workspace.workspaceFolders?.find(folder => uri.path.startsWith(folder.uri.path));
             const wspath = wsFolder?.uri.path.substring(process.platform === 'win32' ? 1 : 0, uri.path.lastIndexOf('/')) || '';

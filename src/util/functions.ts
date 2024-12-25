@@ -54,7 +54,7 @@ export function isBlitzKeyword(name: string): boolean {
 }
 
 /**
- * Determines where the comment starts in a valid blitz3d line. If there is no comment, the line length is returned so that it will always be bigger than all considerable character positions.
+ * Determines where the comment starts in a valid blitzforge line. If there is no comment, the line length is returned so that it will always be bigger than all considerable character positions.
  * @param line the line of code to be examined
  * @returns the position of the first ';' character which is not in a string, or the line length, if there are none
  */

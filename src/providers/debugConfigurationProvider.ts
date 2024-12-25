@@ -5,9 +5,9 @@ export default class BlitzConfigurationProvider implements vscode.DebugConfigura
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
         if (!config.type && !config.request && !config.name) {
             const editor = vscode.window.activeTextEditor;
-            if (editor && editor.document.languageId === 'blitz3d') {
-                config.type = 'blitz3d';
-                config.name = 'Debug Blitz3D program';
+            if (editor && editor.document.languageId === 'blitzforge') {
+                config.type = 'blitzforge';
+                config.name = 'Debug BlitzForge program';
                 config.request = 'launch';
                 config.bbfile = '${file}';
             }

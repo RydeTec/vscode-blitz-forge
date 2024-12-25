@@ -106,7 +106,7 @@ export default class BlitzHoverProvider implements vscode.HoverProvider {
             stub.description.forEach((descLine) => {
                 desc.appendMarkdown('\n' + descLine);
             });
-            if (stub.example) example.appendMarkdown(`[Open example](command:extension.blitz3d.openExample?${encodeURIComponent(JSON.stringify(stub.name))})`);
+            if (stub.example) example.appendMarkdown(`[Open example](command:extension.blitzforge.openExample?${encodeURIComponent(JSON.stringify(stub.name))})`);
             return {
                 contents: [
                     def,
