@@ -713,6 +713,48 @@ export class Blitz117Analyzer implements Analyzer {
         };
     }
 
+    private parseMethodDecl(structIdent: bb.Ident, context: bb.Variable[]): bb.Function {
+        const declRangeStart = this.toker.range().start;
+        this.toker.next();
+        const range = this.toker.range();
+        const ident = this.parseIdent();
+        ident.ident = structIdent.ident + '::' + ident.ident;
+        const tag = this.parseTypeTag();
+        this.funtag = tag;
+        const params = [{
+            kind: 'param',
+            ident: 'self',
+            tag: structIdent.ident,
+            range: range,
+            declarationRange: range,
+            uri: this.uri,
+            constant: false
+        } as bb.Variable];
+        if (this.toker.next() != ')') {
+            for (; ;) {
+                params.push(this.parseVarDecl('param', false, context, this.toker.range().start));
+                if (this.toker.curr() != ',') break;
+                this.toker.next();
+            }
+        }
+        this.toker.next();
+        const locals = [...params];
+        this.parseStmtSeq('fun', locals);
+        const declRangeEnd = this.toker.range().end;
+        this.toker.next();
+        this.funtag = '';
+        return {
+            kind: 'function',
+            ...ident,
+            tag: tag,
+            params: params,
+            locals: locals,
+            range: new vscode.Range(declRangeStart, declRangeEnd),
+            declarationRange: range,
+            uri: this.uri
+        };
+    }
+
     private parseStructDecl(context: bb.Variable[]): bb.Type {
         const pos = this.toker.range().start;
         this.toker.next();
@@ -731,6 +773,13 @@ export class Blitz117Analyzer implements Analyzer {
                 for (const field of lineFields) field.description = this.toker.text().substring(1).trim();
             }
             fields.push(...lineFields);
+            while (this.toker.curr() == '\n') this.toker.next();
+        }
+        while (this.toker.curr() == 'method') {
+            this.funcs.push(this.parseMethodDecl(ident, context));
+            if (this.toker.text().startsWith(';') || this.toker.text().startsWith('//')) {
+                this.toker.text().substring(1).trim();
+            }
             while (this.toker.curr() == '\n') this.toker.next();
         }
         this.toker.next();
@@ -1239,6 +1288,9 @@ export class Blitz117Analyzer implements Analyzer {
                 // Check if () are present and throw error if not
                 if (this.toker.curr() == '(') {
                     this.toker.next();
+                    while (this.toker.curr() != ')') {
+                        this.toker.next();
+                    }
                     this.toker.next();
                 } else {
                     this.diagnostics.get(this.uri)?.push({

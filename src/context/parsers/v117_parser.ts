@@ -717,6 +717,49 @@ export class Blitz117Parser implements Parser {
         };
     }
 
+    parseMethodDecl(structIdent: bb.Ident): bb.Function {
+        const declRangeStart = this.toker.range().start;
+        this.toker.next();
+        const range = this.toker.range();
+        const ident = this.parseIdent();
+        ident.ident = structIdent.ident + '::' + ident.ident;
+        const tag = this.parseTypeTag();
+        if (this.toker.curr() != '(') this.expecting("'('");
+        const params = [{
+            kind: 'param',
+            ident: 'self',
+            tag: structIdent.ident,
+            range: range,
+            declarationRange: range,
+            uri: this.uri,
+            constant: false
+        } as bb.Variable];
+        if (this.toker.next() != ')') {
+            for (; ;) {
+                params.push(this.parseVarDecl('param', false, this.toker.range().start));
+                if (this.toker.curr() != ',') break;
+                this.toker.next();
+            }
+            if (this.toker.curr() != ')') this.expecting("')'");
+        }
+        this.toker.next();
+        const locals = [...params];
+        this.parseStmtSeq('fun');
+        if (this.toker.curr() != 'endmethod' && this.toker.curr() != 'end') this.expecting("'End Method' or 'End'");
+        const declRangeEnd = this.toker.range().end;
+        this.toker.next();
+        return {
+            kind: 'function',
+            ...ident,
+            tag: tag,
+            params: params,
+            locals: locals,
+            range: new vscode.Range(declRangeStart, declRangeEnd),
+            declarationRange: range,
+            uri: this.uri
+        };
+    }
+
     parseStructDecl(): bb.Type {
         const pos = this.toker.range().start;
         this.toker.next();
@@ -775,6 +818,13 @@ export class Blitz117Parser implements Parser {
                 for (const field of lineFields) field.description = this.toker.text().substring(1).trim();
             }
             fields.push(...lineFields);
+            while (this.toker.curr() == '\n') this.toker.next();
+        }
+        while (this.toker.curr() == 'method') {
+            this.funcs.push(this.parseMethodDecl(ident));
+            if (this.toker.text().startsWith(';') || this.toker.text().startsWith('//')) {
+                this.toker.text().substring(1).trim();
+            }
             while (this.toker.curr() == '\n') this.toker.next();
         }
         if (this.toker.curr() != 'endtype') this.expecting("'Field' or 'End Type'");
@@ -1224,6 +1274,9 @@ export class Blitz117Parser implements Parser {
                 t = this.parseIdent();
                 if (this.toker.curr() == '(') {
                     this.toker.next();
+                    while (this.toker.curr() != ')') {
+                        this.toker.next();
+                    }
                     this.toker.next();
                 } else {
                     this.diagnostics.get(this.uri)?.push({

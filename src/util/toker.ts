@@ -31,7 +31,7 @@ function isalnum(ch: string): boolean {
     return '0123456789_abcdefghijklmnopqrstuvwxyz'.includes(ch.toLowerCase());
 }
 
-const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'test', 'end test', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'ptr', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
+const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'method', 'end method', 'test', 'end test', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'ptr', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
 
 export class BlitzToker {
     private input: string[];
@@ -155,7 +155,14 @@ export class BlitzToker {
                 for (++k; isalnum(this.line[k]); ++k);
                 let ident = this.line.substring(from, k).toLowerCase();
 
-                if (this.line[k] == ' ' && isalpha(this.line[k + 1])) {
+                // Check for :: operator followed by another identifier
+                if (this.line[k] === ':' && this.line[k + 1] === ':' && isalpha(this.line[k + 2])) {
+                    k += 2; // Skip the ::
+                    // Parse the second identifier
+                    let secondStart = k;
+                    for (++k; isalnum(this.line[k]); ++k);
+                    ident += '::' + this.line.substring(secondStart, k).toLowerCase();
+                } else if (this.line[k] == ' ' && isalpha(this.line[k + 1])) {
                     let t = k;
                     for (t += 2; isalnum(this.line[t]); ++t);
                     const s = this.line.substring(from, t).toLowerCase();
