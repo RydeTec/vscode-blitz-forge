@@ -25,6 +25,7 @@ export class Blitz117Parser implements Parser {
     globals: bb.Variable[] = [];
     structs: bb.Type[] = [];
     funcs: bb.Function[] = [];
+    tests: bb.Test[] = [];
     datas: bb.Data[] = [];
     labels: bb.Token[] = [];
     diagnostics: Map<vscode.Uri, vscode.Diagnostic[]> = new Map<vscode.Uri, vscode.Diagnostic[]>();
@@ -42,6 +43,7 @@ export class Blitz117Parser implements Parser {
         this.consts = [];
         this.structs = [];
         this.funcs = [];
+        this.tests = [];
         this.datas = [];
         this.diagnostics = new Map<vscode.Uri, vscode.Diagnostic[]>();
         this.bbdoc = {
@@ -87,6 +89,7 @@ export class Blitz117Parser implements Parser {
         this.consts = this.consts.filter(constant => constant.uri.path != uri.path);
         this.diagnostics.set(uri, []);
         this.funcs = this.funcs.filter(fun => fun.uri.path != uri.path);
+        this.tests = this.tests.filter(test => test.uri.path != uri.path);
         this.globals = this.globals.filter(global => global.uri.path != uri.path);
         this.labels = this.labels.filter(label => label.uri.path != uri.path);
         this.structs = this.structs.filter(type => type.uri.path != uri.path);
@@ -147,9 +150,9 @@ export class Blitz117Parser implements Parser {
         for (; ;) {
             while (this.toker.curr() == ':' || (scope != 'line' && this.toker.curr() == '\n')) {
                 const bbdoc = this.toker.text();
-                if (bbdoc.startsWith(';; ')) {
+                if (bbdoc.startsWith('/**')) {
                     this.bbdoc.descLines.push(bbdoc.substring(3));
-                } else if (bbdoc.startsWith(';;param ')) {
+                } else if (bbdoc.startsWith('* @param ')) {
                     const line = bbdoc.substring(8);
                     if (line.includes(' ')) {
                         const param = line.substring(0, line.indexOf(' '));
@@ -162,15 +165,15 @@ export class Blitz117Parser implements Parser {
                             severity: vscode.DiagnosticSeverity.Warning
                         });
                     }
-                } else if (bbdoc.startsWith(';;author ')) {
+                } else if (bbdoc.startsWith('* @author ')) {
                     this.bbdoc.authors.push(bbdoc.substring(9));
-                } else if (bbdoc.startsWith(';;return ')) {
+                } else if (bbdoc.startsWith('* @return ')) {
                     this.bbdoc.returns = bbdoc.substring(9);
-                } else if (bbdoc.startsWith(';;since ')) {
-                    this.bbdoc.since = bbdoc.substring(8);
-                } else if (bbdoc.startsWith(';;deprecated')) {
+                } else if (bbdoc.startsWith('* @since ')) {
+                    this.bbdoc.since = bbdoc.substring(9);
+                } else if (bbdoc.startsWith('* @deprecated')) {
                     this.bbdoc.deprecated = bbdoc.substring(12).trim();
-                } else if (bbdoc.startsWith(';;') && !bbdoc.startsWith(';;todo')) {
+                } else if (bbdoc.startsWith('* @') && !bbdoc.startsWith('* @todo')) {
                     this.diagnostics.get(this.uri)?.push({
                         message: `Invalid BBDoc`,
                         range: this.toker.range(),
@@ -439,6 +442,24 @@ export class Blitz117Parser implements Parser {
                         since: ''
                     };
                     break;
+                case 'test':
+                    if (scope != 'prog') this.exception('Tests can only be defined in the main program');
+                    const test = this.parseTestDecl();
+                    test.description = this.bbdoc.descLines.join('  \n');
+                    test.authors = this.bbdoc.authors;
+                    test.returns = this.bbdoc.returns;
+                    test.since = this.bbdoc.since;
+                    test.deprecated = this.bbdoc.deprecated;
+                    this.tests.push(test);
+                    this.bbdoc = {
+                        descLines: [],
+                        paramLines: new Map<string, string>(),
+                        authors: [],
+                        returns: '',
+                        deprecated: undefined,
+                        since: ''
+                    };
+                    break;
                 case 'dim':
                     do {
                         this.toker.next();
@@ -662,6 +683,37 @@ export class Blitz117Parser implements Parser {
         };
     }
 
+    parseTestDecl(): bb.Test {
+        const declRangeStart = this.toker.range().start;
+        this.toker.next();
+        const range = this.toker.range();
+        const ident = this.parseIdent();
+        const tag = this.parseTypeTag();
+        if (this.toker.curr() != '(') this.expecting("'('");
+        if (this.toker.next() != ')') {
+            // Show error that tests don't have parameters
+            this.diagnostics.get(this.uri)?.push({
+                message: "Tests don't have parameters",
+                range: this.toker.range(),
+                severity: vscode.DiagnosticSeverity.Error
+            });
+        }
+        this.toker.next();
+        const locals: bb.Variable[] = [];
+        this.parseStmtSeq('fun');
+        if (this.toker.curr() != 'endtest' && this.toker.curr() != 'end') this.expecting("'End Test' or 'End'");
+        const declRangeEnd = this.toker.range().end;
+        this.toker.next();
+        return {
+            kind: 'test',
+            ...ident,
+            locals: locals,
+            range: new vscode.Range(declRangeStart, declRangeEnd),
+            declarationRange: range,
+            uri: this.uri
+        };
+    }
+
     parseStructDecl(): bb.Type {
         const pos = this.toker.range().start;
         this.toker.next();
@@ -716,7 +768,7 @@ export class Blitz117Parser implements Parser {
                 });
                 else lineFields.push(field);
             } while (this.toker.curr() == ',');
-            if (this.toker.text().startsWith(';')) {
+            if (this.toker.text().startsWith(';') || this.toker.text().startsWith('//')) {
                 for (const field of lineFields) field.description = this.toker.text().substring(1).trim();
             }
             fields.push(...lineFields);

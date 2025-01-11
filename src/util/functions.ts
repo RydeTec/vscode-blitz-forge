@@ -63,6 +63,7 @@ export function startOfComment(line: string): number {
     for (let i = 0; i < line.length; i++) {
         if (line[i] == '"') instring = !instring;
         if (line[i] == ';' && !instring) return i;
+        if (line[i] == '/' && line[i+1] == '/' && !instring) return i;
     }
     return line.length + 1; // so that c >= startOfComment only if the cth is a comment character
 }
@@ -132,4 +133,16 @@ export function isIllegalTypeConversion(source: string, dest: string): number {
 
 export function isTerm(c: string | undefined): boolean {
     return !c || c == ':' || c == '\n';
+}
+
+export function isDeprecatedComment(line: string): boolean {
+    let instring: boolean = false;
+    for (let i = 0; i < line.length; i++) {
+        if (line[i] == '"') instring = !instring;
+        // Skip if in string or if it's a BBDoc comment (;;)
+        if (!instring && line[i] === ';' && (i === 0 || line[i-1] !== ';')) {
+            return true;
+        }
+    }
+    return false;
 }

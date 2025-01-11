@@ -22,6 +22,14 @@ export type Function = Token & {
     since?: string;
 };
 
+export type Test = Token & {
+    locals: Variable[],
+    authors?: string[],
+    returns?: string,
+    deprecated?: string,
+    since?: string;
+};
+
 export type Type = Token & {
     fields: Variable[],
     authors?: string[],

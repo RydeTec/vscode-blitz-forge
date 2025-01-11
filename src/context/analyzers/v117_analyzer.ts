@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import * as vscode from 'vscode';
-import { isBuiltinBlitzFunction, isIllegalTypeConversion, isTerm } from '../../util/functions';
+import { isBuiltinBlitzFunction, isIllegalTypeConversion, isTerm, isDeprecatedComment } from '../../util/functions';
 import { BlitzToker } from '../../util/toker';
 import * as bb from '../types';
 import { obtainWorkingDir, userLibs } from '../context';
@@ -18,6 +18,7 @@ export class Blitz117Analyzer implements Analyzer {
     locals: bb.Variable[] = [];
     structs: bb.Type[] = [];
     funcs: bb.Function[] = [];
+    tests: bb.Test[] = [];
     datas: any[] = [];
     labels: bb.Token[] = [];
     stmts: any[] = [];
@@ -117,6 +118,14 @@ export class Blitz117Analyzer implements Analyzer {
 
         for (; ;) {
             while (this.toker.curr() == ':' || (scope != 'line' && this.toker.curr() == '\n')) {
+                const currentLine = this.toker.text();
+                if (isDeprecatedComment(currentLine)) {
+                    this.diagnostics.get(this.uri)?.push({
+                        message: "Deprecated comment style. Use '//' instead of ';' for single-line comments",
+                        range: this.toker.range(),
+                        severity: vscode.DiagnosticSeverity.Warning
+                    });
+                }
                 this.toker.next();
             }
             let pos = this.toker.range();
@@ -425,6 +434,12 @@ export class Blitz117Analyzer implements Analyzer {
                     if (prev) Object.assign(prev, fun);
                     else this.funcs.push(fun);
                     break;
+                case 'test':
+                    const test = this.parseTestDecl(context);
+                    const prevTest = this.tests.find(f => f.ident == test.ident);
+                    if (prevTest) Object.assign(prevTest, test);
+                    else this.tests.push(test);
+                    break;
                 case 'dim':
                     do {
                         this.toker.next();
@@ -667,6 +682,34 @@ export class Blitz117Analyzer implements Analyzer {
         };
     }
 
+    private parseTestDecl(context: bb.Variable[]): bb.Test {
+        const declRangeStart = this.toker.range().start;
+        this.toker.next();
+        const range = this.toker.range();
+        const ident = this.parseIdent();
+        if (this.toker.next() != ')') {
+            // Show error that tests cannot have parameters
+            this.diagnostics.get(this.uri)?.push({
+                message: "Tests cannot have parameters",
+                range: this.toker.range(),
+                severity: vscode.DiagnosticSeverity.Error
+            });
+        }
+        this.toker.next();
+        const locals: bb.Variable[] = [];
+        this.parseStmtSeq('fun', locals);
+        const declRangeEnd = this.toker.range().end;
+        this.toker.next();
+        return {
+            kind: 'test',
+            ...ident,
+            locals: locals,
+            range: new vscode.Range(declRangeStart, declRangeEnd),
+            declarationRange: range,
+            uri: this.uri
+        };
+    }
+
     private parseStructDecl(context: bb.Variable[]): bb.Type {
         const pos = this.toker.range().start;
         this.toker.next();
@@ -681,7 +724,7 @@ export class Blitz117Analyzer implements Analyzer {
                 const field = this.parseVarDecl('field', false, context, range.start);
                 if (!fields.find(f => f.ident == field.ident)) lineFields.push(field);
             } while (this.toker.curr() == ',');
-            if (this.toker.text().startsWith(';')) {
+            if (this.toker.text().startsWith(';') || this.toker.text().startsWith('//')) {
                 for (const field of lineFields) field.description = this.toker.text().substring(1).trim();
             }
             fields.push(...lineFields);

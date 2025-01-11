@@ -31,7 +31,7 @@ function isalnum(ch: string): boolean {
     return '0123456789_abcdefghijklmnopqrstuvwxyz'.includes(ch.toLowerCase());
 }
 
-const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
+const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'test', 'end test', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
 
 export class BlitzToker {
     private input: string[];
@@ -40,6 +40,8 @@ export class BlitzToker {
 
     private currRow: number = -1;
     private line: string = '\n';
+
+    private inMultilineComment: boolean = false;
 
     constructor(input: string) {
         this.input = input.split(/\r\n|\r|\n/);
@@ -82,23 +84,6 @@ export class BlitzToker {
         }
         this.line = this.input[this.currRow] + '\n';
 
-        { // multiline comments
-            let k = 0, rem_nest = 0;
-            while (this.line[k] != '\n' && isspace(this.line[k])) k++;
-            if (this.line[k] == '/' && this.line[k + 1] == '*') {
-                ++rem_nest;
-                k += 2;
-            } else if (this.line[k] == '*' && this.line[k + 1] == '/') {
-                --rem_nest;
-                k += 2;
-            }
-            if (rem_nest) {
-                for (; this.line[k] != '\n'; ++k);
-                this.tokes.push({type: '\n', from: k, to: k + 1});
-                return;
-            }
-        }
-
         for (let k = 0; k < this.line.length;) {
             const c = this.line[k], from = k;
             if (c == '\n') {
@@ -108,6 +93,33 @@ export class BlitzToker {
             if (isspace(c)) {
                 ++k;
                 continue;
+            }
+            if ((c == '/' && this.line[k + 1] == '*') || this.inMultilineComment) {
+                if (!this.inMultilineComment) {
+                    this.inMultilineComment = true;
+                    k += 2;  // Skip /*
+                }
+                
+                // Look for end of comment
+                while (k < this.line.length) {
+                    if (this.line[k] == '*' && this.line[k + 1] == '/') {
+                        this.inMultilineComment = false;
+                        k += 2;  // Skip */
+                        break;
+                    }
+                    k++;
+                }
+                
+                // If we're in a multiline comment, consume the whole line
+                if (this.inMultilineComment) {
+                    this.tokes.push({ type: '\n', from: from, to: this.line.length });
+                    return;
+                }
+                continue;
+            }
+            if (c == '/' && this.line[k + 1] == '/') {
+                this.tokes.push({ type: '\n', from: k, to: this.line.length - 1 });
+                break;
             }
             if (c == ';') {
                 this.tokes.push({ type: '\n', from: k, to: this.line.length - 1 });
