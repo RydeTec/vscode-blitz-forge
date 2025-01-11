@@ -59,7 +59,7 @@ export function isBlitzKeyword(name: string): boolean {
  * @returns true if type is a builtin blitz type
  */
 export function isBuiltinBlitzType(type: string): boolean {
-    return ',bbbank,bblist,bbstream,bbstring,bbchar,bbint,bbfloat,bbdouble,bbbool,bbbyte,bbword,bbdword,bbqword,bbpointer,bbarray,bbstruct,bbfunction,bbevent,bbeventgroup,bbentity,bbcamera,bblight,bbpivot,bbsprite,bbmesh,bbterrain,bblistener,bbtexture,bbbrush,bbmaterial,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,'.includes(',' + type.toLowerCase() + ',');
+    return ',bbthread,bbbank,bblist,bbstream,bbstring,bbchar,bbint,bbfloat,bbdouble,bbbool,bbbyte,bbword,bbdword,bbqword,bbpointer,bbarray,bbstruct,bbfunction,bbevent,bbeventgroup,bbentity,bbcamera,bblight,bbpivot,bbsprite,bbmesh,bbterrain,bblistener,bbtexture,bbbrush,bbmaterial,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,'.includes(',' + type.toLowerCase() + ',');
 }
 
 /**
