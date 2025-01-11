@@ -553,11 +553,22 @@ export class Blitz117Analyzer implements Analyzer {
                 const type = this.structs.find(type => type.ident == variable!.tag);
                 const f = type?.fields.find(field => field.ident == ident?.ident);
                 if (f) variable = f;
-                else this.diagnostics.get(this.uri)?.push({
-                    message: `Unknown field '${ident?.name}'`,
-                    range: range,
-                    severity: vscode.DiagnosticSeverity.Error
-                });
+                else{ 
+                    this.diagnostics.get(this.uri)?.push({
+                        message: `Unknown field '${ident?.name}'`,
+                        range: range,
+                        severity: vscode.DiagnosticSeverity.Warning
+                    });
+                    variable = {
+                        kind: 'variable',
+                        ...ident!,
+                        tag: '%',
+                        constant: false,
+                        range: range,
+                        declarationRange: range,
+                        uri: this.uri
+                    };
+                }
                 const illegal = isIllegalTypeConversion(variable?.tag || '%', tag || '%');
                 if (f && tag && variable && illegal) this.diagnostics.get(this.uri)?.push({
                     message: `Variable of type '${variable.tag || '%'}' ${illegal == 1 ? 'should not' : 'cannot'} be converted to type '${tag}'`,
@@ -851,7 +862,7 @@ export class Blitz117Analyzer implements Analyzer {
             if (expressions.length > fun.params.length || expressions.length < minParams) this.diagnostics.get(this.uri)?.push({
                 message: `Number of parameters is incorrect: expected ${fun.params.length != minParams ? `${minParams}-${fun.params.length}` : minParams}, got ${expressions.length}`,
                 range: new vscode.Range(paramStart, this.toker.range().start),
-                severity: vscode.DiagnosticSeverity.Error
+                severity: vscode.DiagnosticSeverity.Warning
             });
         }
         return expressions;
