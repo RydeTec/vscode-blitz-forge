@@ -760,6 +760,7 @@ export class Blitz117Analyzer implements Analyzer {
         this.toker.next();
         const range = this.toker.range();
         const ident = this.parseIdent();
+        const tag = this.parseTypeTag();
         while (this.toker.curr() == '\n') this.toker.next();
         const fields: bb.Variable[] = [];
         while (this.toker.curr() == 'field') {
@@ -786,6 +787,7 @@ export class Blitz117Analyzer implements Analyzer {
         const type = {
             kind: 'type',
             ...ident,
+            tag: tag,
             fields: fields,
             range: new vscode.Range(pos, this.toker.range().start),
             declarationRange: range,

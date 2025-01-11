@@ -147,7 +147,7 @@ export function isIllegalTypeConversion(source: string, dest: string): number {
             return '?%#$*@'.includes(dest) ? 2 : 0;
         default:
             if (dest == '@') return 0;
-            return source == dest ? 0 : 2;
+            return source == dest ? 0 : 1;
     }
 }
 

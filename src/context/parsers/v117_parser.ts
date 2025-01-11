@@ -765,6 +765,7 @@ export class Blitz117Parser implements Parser {
         this.toker.next();
         const range = this.toker.range();
         const ident = this.parseIdent();
+        const tag = this.parseTypeTag();
         const existingType = this.structs.find(t => t.ident == ident.ident);
         if (existingType) {
             this.diagnostics.get(this.uri)?.push({
@@ -837,6 +838,7 @@ export class Blitz117Parser implements Parser {
         const type = {
             kind: 'type',
             ...ident,
+            tag: tag,
             fields: fields,
             range: new vscode.Range(pos, this.toker.range().start),
             declarationRange: range,

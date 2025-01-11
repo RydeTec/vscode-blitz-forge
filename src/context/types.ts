@@ -31,6 +31,7 @@ export type Test = Token & {
 };
 
 export type Type = Token & {
+    tag: string,
     fields: Variable[],
     authors?: string[],
     since?: string;
