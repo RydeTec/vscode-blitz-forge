@@ -4,52 +4,76 @@
 	"scopeName": "source.bbdoc",
 	"patterns": [
 		{
+			"name": "comment.block.documentation",
+			"begin": "/\\*\\*",
+			"end": "\\*\\*/",
 			"captures": {
-				"1": {
+				"0": {
 					"name": "keyword.other.documentation"
 				}
 			},
-			"name": "comment.block.documentation",
-			"match": "(;; ).*$"
-		},
-		{
-			"captures": {
-				"1": {
-					"name": "keyword.other.documentation"
+			"patterns": [
+				{
+					"match": "\\*\\s*(@param)\\s+(\\w+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.documentation.param"
+						},
+						"2": {
+							"name": "variable.parameter"
+						}
+					}
 				},
-				"2": {
-					"name": "variable.parameter"
+				{
+					"match": "\\*\\s*(@author)\\s+(\\w+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.documentation.author"
+						},
+						"2": {
+							"name": "variable.author"
+						}
+					}
+				},
+				{
+					"match": "\\*\\s*(@return)\\s+(\\w+)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.documentation.return"
+						},
+						"2": {
+							"name": "variable.return"
+						}
+					}
+				},
+				{
+					"match": "\\*\\s*(@deprecated)",
+					"captures": {
+						"1": {
+							"name": "keyword.other.documentation.deprecated"
+						}
+					}
 				}
-			},
-			"name": "comment.block.documentation",
-			"match": "(;;param)\\s(\\w+)\\b.*$"
+			]
+		},
+		{
+			"name": "comment.block.bb",
+			"begin": "/\\*",
+			"end": "\\*/",
+			"captures": {
+				"0": {
+					"name": "punctuation.definition.comment.bb"
+				}
+			}
 		},
 		{
 			"captures": {
 				"1": {
-					"name": "keyword.other.documentation"
+					"name": "punctuation.definition.comment.bb"
 				}
 			},
-			"name": "comment.block.documentation",
-			"match": "(;;author ).*$"
-		},
-		{
-			"captures": {
-				"1": {
-					"name": "keyword.other.documentation"
-				}
-			},
-			"name": "comment.block.documentation",
-			"match": "(;;return ).*$"
-		},
-		{
-			"captures": {
-				"1": {
-					"name": "keyword.other.documentation"
-				}
-			},
-			"name": "comment.block.documentation",
-			"match": "(;;since ).*$"
+			"match": "(//).*$",
+			"name": "comment.line.double-slash.bb"
 		},
 		{
 			"captures": {
