@@ -784,7 +784,18 @@ export class Blitz117Parser implements Parser {
             });
         }
         while (this.toker.curr() == '\n') this.toker.next();
-        const fields: bb.Variable[] = [];
+        const fields: bb.Variable[] = [
+            {
+                kind: 'variable',
+                ident: 'classname',
+                name: 'className',
+                tag: '$',
+                constant: false,
+                range: range,
+                declarationRange: range,
+                uri: this.uri
+            }
+        ];
         while (this.toker.curr() == 'field') {
             const start = this.toker.range().start;
             const lineFields = [];
@@ -821,6 +832,17 @@ export class Blitz117Parser implements Parser {
             fields.push(...lineFields);
             while (this.toker.curr() == '\n') this.toker.next();
         }
+        this.funcs.push({
+            kind: 'function',
+            ident: ident.ident + '::classname',
+            name: 'className',
+            tag: '$',
+            params: [],
+            locals: [],
+            range: range,
+            declarationRange: range,
+            uri: this.uri
+        } as bb.Function);
         while (this.toker.curr() == 'method') {
             this.funcs.push(this.parseMethodDecl(ident));
             if (this.toker.text().startsWith(';') || this.toker.text().startsWith('//')) {
