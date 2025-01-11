@@ -291,6 +291,9 @@ export default class BlitzSemanticTokensProvider implements vscode.DocumentSeman
             case '$':
                 toker.next();
                 return '$';
+            case '@':
+                toker.next();
+                return '@';
             case '.':
                 toker.next();
                 tokens.push({
@@ -537,6 +540,7 @@ export default class BlitzSemanticTokensProvider implements vscode.DocumentSeman
                 this.parseUniExpr(toker, override);
                 break;
             case 'handle':
+            case 'ptr':
             case 'before':
             case 'after':
             case '+':

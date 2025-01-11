@@ -50,7 +50,7 @@ export type DimmedArray = Variable & {
     dimension: number
 };
 
-export type ExpressionKind = '?' | '%' | '#' | '$' | '.';
+export type ExpressionKind = '?' | '%' | '#' | '$' | '.' | '@';
 
 export type Expression = {
     kind: ExpressionKind,

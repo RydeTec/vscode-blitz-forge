@@ -525,6 +525,9 @@ export class Blitz117Parser implements Parser {
             case '$':
                 this.toker.next();
                 return '$';
+            case '@':
+                this.toker.next();
+                return '@';
         }
         if ((this.dialect == 'modern' && this.toker.curr() == ':') || (this.dialect != 'modern' && this.toker.curr() == '.')) {
             this.toker.next();
@@ -1149,6 +1152,15 @@ export class Blitz117Parser implements Parser {
                     uri: this.uri
                 };
                 break;
+            case 'ptr':
+                this.toker.next();
+                this.parseUniExpr(false);
+                result = {
+                    kind: '@',
+                    range: new vscode.Range(start, this.toker.range().start),
+                    uri: this.uri
+                };
+                break;
             case 'before':
                 this.toker.next();
                 this.parseUniExpr(false);
@@ -1210,6 +1222,16 @@ export class Blitz117Parser implements Parser {
             case 'new':
                 this.toker.next();
                 t = this.parseIdent();
+                if (this.toker.curr() == '(') {
+                    this.toker.next();
+                    this.toker.next();
+                } else {
+                    this.diagnostics.get(this.uri)?.push({
+                        message: `Missing '(' for constructor call of type '${t.name}'`,
+                        range: this.toker.range(),
+                        severity: vscode.DiagnosticSeverity.Error
+                    });
+                }
                 result = {
                     kind: '.',
                     type: t.ident,

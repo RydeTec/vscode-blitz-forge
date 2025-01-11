@@ -29,7 +29,7 @@ export function extractType(name: string): string {
     }
     if (q.indexOf('.') > 0) {
         return q.split('.')[1] + suffix;
-    } else if (q.endsWith('$') || q.endsWith('#') || q.endsWith('%')) {
+    } else if (q.endsWith('$') || q.endsWith('#') || q.endsWith('%') || q.endsWith('@')) {
         return q.substring(q.length - 1) + suffix;
     } else return '(%)' + suffix;
 }
@@ -51,6 +51,15 @@ export function isBuiltinBlitzFunction(name: string): boolean {
  */
 export function isBlitzKeyword(name: string): boolean {
     return ',if,then,else,elseif,endif,select,case,default,end,and,or,xor,not,repeat,until,forever,while,wend,for,to,step,next,exit,goto,gosub,return,function,const,global,local,dim,type,field,new,each,first,last,insert,delete,true,false,null,data,read,restore,include,pi,mod,shl,shr,sar,'.includes(',' + name.toLowerCase() + ',');
+}
+
+/**
+ * Check if a type is a builtin blitz type
+ * @param type the type to check
+ * @returns true if type is a builtin blitz type
+ */
+export function isBuiltinBlitzType(type: string): boolean {
+    return ',bbbank,bblist,bbstream,bbstring,bbchar,bbint,bbfloat,bbdouble,bbbool,bbbyte,bbword,bbdword,bbqword,bbpointer,bbarray,bbstruct,bbfunction,bbevent,bbeventgroup,bbentity,bbcamera,bblight,bbpivot,bbsprite,bbmesh,bbterrain,bblistener,bbtexture,bbbrush,bbmaterial,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,bbentity3d,bbcamera3d,bblight3d,bbpivot3d,bbsprite3d,bbmesh3d,bbterrain3d,bblistener3d,bbtexture3d,bbbrush3d,bbmaterial3d,'.includes(',' + type.toLowerCase() + ',');
 }
 
 /**
@@ -85,7 +94,7 @@ export function isInString(line: string, position: number): boolean {
 }
 
 export function prettyName(name: string, tag: string) {
-    return name + ('#$%'.includes(tag) ? '' : '.') + tag;
+    return name + ('#$%@'.includes(tag) ? '' : '.') + tag;
 }
 
 export function isIllegalTypeConversion(source: string, dest: string): number {
@@ -105,8 +114,11 @@ export function isIllegalTypeConversion(source: string, dest: string): number {
                 case '%':
                 case '#':
                 case '$':
+                case '@':
                 case '*': return 0;
-                default: return 2;
+                default: 
+                    if (isBuiltinBlitzType(dest)) return 0;
+                    return 2;
             }
         case '#':
             switch (dest) {
@@ -124,9 +136,17 @@ export function isIllegalTypeConversion(source: string, dest: string): number {
                 case '$': return 0;
                 default: return 2;
             }
+        case '@':
+            switch (dest) {
+                case '%': return 1;
+                case '#': 
+                case '$': return 2;
+                default: return 0;
+            }
         case 'null':
-            return '?%#$*'.includes(dest) ? 2 : 0;
+            return '?%#$*@'.includes(dest) ? 2 : 0;
         default:
+            if (dest == '@') return 0;
             return source == dest ? 0 : 2;
     }
 }

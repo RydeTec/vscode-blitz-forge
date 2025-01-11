@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import * as vscode from 'vscode';
-import { isBuiltinBlitzFunction, isIllegalTypeConversion, isTerm, isDeprecatedComment } from '../../util/functions';
+import { isBuiltinBlitzFunction, isIllegalTypeConversion, isTerm, isDeprecatedComment, isBuiltinBlitzType } from '../../util/functions';
 import { BlitzToker } from '../../util/toker';
 import * as bb from '../types';
 import { obtainWorkingDir, userLibs } from '../context';
@@ -156,7 +156,7 @@ export class Blitz117Analyzer implements Analyzer {
                         const ident = this.parseIdent();
                         const trange = this.toker.range();
                         const tag = this.parseTypeTag();
-                        if (tag && !'%#$'.includes(tag) && !this.structs.find(type => type.ident == tag)) this.diagnostics.get(this.uri)?.push({
+                        if (tag && !'%#$@'.includes(tag) && !this.structs.find(type => type.ident == tag) && !isBuiltinBlitzType(tag)) this.diagnostics.get(this.uri)?.push({
                             message: `Unknown type '${tag}'`,
                             range: new vscode.Range(trange.end, this.toker.range().start),
                             severity: vscode.DiagnosticSeverity.Error
@@ -282,7 +282,7 @@ export class Blitz117Analyzer implements Analyzer {
                         if (this.toker.next() == 'each') {
                             this.toker.next();
                             const ident = this.parseIdent();
-                            if (!this.structs.find(type => type.ident == ident.ident)) this.diagnostics.get(this.uri)?.push({
+                            if (!this.structs.find(type => type.ident == ident.ident) && !isBuiltinBlitzType(ident.ident)) this.diagnostics.get(this.uri)?.push({
                                 message: `Unknown type '${ident.name}'`,
                                 range: this.toker.range(),
                                 severity: vscode.DiagnosticSeverity.Error
@@ -366,7 +366,7 @@ export class Blitz117Analyzer implements Analyzer {
                         if (this.toker.next() == 'each') {
                             this.toker.next();
                             const t = this.parseIdent();
-                            if (!this.structs.find(type => type.ident == t.ident)) this.diagnostics.get(this.uri)?.push({
+                            if (!this.structs.find(type => type.ident == t.ident) && !isBuiltinBlitzType(t.ident)) this.diagnostics.get(this.uri)?.push({
                                 message: `Unknown type '${t.name}'`,
                                 range: this.toker.range(),
                                 severity: vscode.DiagnosticSeverity.Error
@@ -488,6 +488,9 @@ export class Blitz117Analyzer implements Analyzer {
             case '$':
                 this.toker.next();
                 return '$';
+            case '@':
+                this.toker.next();
+                return '@';
         }
         if ((this.dialect == 'modern' && this.toker.curr() == ':') || (this.dialect != 'modern' && this.toker.curr() == '.')) {
             this.toker.next();
@@ -578,7 +581,7 @@ export class Blitz117Analyzer implements Analyzer {
         const ident = this.parseIdent();
         const trange = this.toker.range();
         let tag = this.parseTypeTag() || '%';
-        if (!'%#$'.includes(tag) && !this.structs.find(type => type.ident == tag)) this.diagnostics.get(this.uri)?.push({
+        if (!'%#$@'.includes(tag) && !this.structs.find(type => type.ident == tag) && !isBuiltinBlitzType(tag)) this.diagnostics.get(this.uri)?.push({
             message: `Unknown type '${tag}'`,
             range: new vscode.Range(trange.end, this.toker.range().start),
             severity: vscode.DiagnosticSeverity.Error
@@ -1110,6 +1113,15 @@ export class Blitz117Analyzer implements Analyzer {
                     uri: this.uri
                 };
                 break;
+            case 'ptr':
+                this.toker.next();
+                this.parseUniExpr(context);
+                result = {
+                    kind: '@',
+                    range: new vscode.Range(start, this.toker.range().start),
+                    uri: this.uri
+                };
+                break;
             case 'before':
                 {
                     this.toker.next();
@@ -1219,11 +1231,22 @@ export class Blitz117Analyzer implements Analyzer {
             case 'new':
                 this.toker.next();
                 t = this.parseIdent();
-                if (!this.structs.find(type => type.ident == t.ident)) this.diagnostics.get(this.uri)?.push({
+                if (!this.structs.find(type => type.ident == t.ident) && !isBuiltinBlitzType(t.ident)) this.diagnostics.get(this.uri)?.push({
                     message: `Unknown type '${t.name}'`,
                     range: this.toker.range(),
                     severity: vscode.DiagnosticSeverity.Error
                 });
+                // Check if () are present and throw error if not
+                if (this.toker.curr() == '(') {
+                    this.toker.next();
+                    this.toker.next();
+                } else {
+                    this.diagnostics.get(this.uri)?.push({
+                        message: `Missing '(' for constructor call of type '${t.name}'`,
+                        range: this.toker.range(),
+                        severity: vscode.DiagnosticSeverity.Error
+                    });
+                }
                 result = {
                     kind: '.',
                     type: t.ident,
@@ -1234,7 +1257,7 @@ export class Blitz117Analyzer implements Analyzer {
             case 'first':
                 this.toker.next();
                 t = this.parseIdent();
-                if (!this.structs.find(type => type.ident == t.ident)) this.diagnostics.get(this.uri)?.push({
+                if (!this.structs.find(type => type.ident == t.ident) && !isBuiltinBlitzType(t.ident)) this.diagnostics.get(this.uri)?.push({
                     message: `Unknown type '${t.name}'`,
                     range: this.toker.range(),
                     severity: vscode.DiagnosticSeverity.Error
@@ -1249,7 +1272,7 @@ export class Blitz117Analyzer implements Analyzer {
             case 'last':
                 this.toker.next();
                 t = this.parseIdent();
-                if (!this.structs.find(type => type.ident == t.ident)) this.diagnostics.get(this.uri)?.push({
+                if (!this.structs.find(type => type.ident == t.ident) && !isBuiltinBlitzType(t.ident)) this.diagnostics.get(this.uri)?.push({
                     message: `Unknown type '${t.name}'`,
                     range: this.toker.range(),
                     severity: vscode.DiagnosticSeverity.Error
@@ -1359,7 +1382,7 @@ export class Blitz117Analyzer implements Analyzer {
                     this.parseExprSeq(context, fun);
                     this.toker.next();
                     if ((!tag && fun) || (tag == '%' && fun?.tag == '?')) tag = fun.tag;
-                    if (['?', '%', '#', '$'].includes(tag)) result = {
+                    if (['?', '%', '#', '$', '@'].includes(tag)) result = {
                         ...fun,
                         kind: tag as bb.ExpressionKind,
                         range: new vscode.Range(start, this.toker.range().end),
@@ -1375,7 +1398,7 @@ export class Blitz117Analyzer implements Analyzer {
                 } else {
                     const variable = this.parseVar(false, context, t, tag, pos);
                     if (!tag || (tag == '%' && variable.tag == '?') || variable.kind == 'field') tag = variable.tag || '%';
-                    if (['?', '%', '#', '$'].includes(tag)) result = { ...variable, kind: tag as bb.ExpressionKind };
+                    if (['?', '%', '#', '$', '@'].includes(tag)) result = { ...variable, kind: tag as bb.ExpressionKind };
                     else result = { ...variable, kind: '.', type: tag };
                 }
                 break;

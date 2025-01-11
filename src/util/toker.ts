@@ -31,7 +31,7 @@ function isalnum(ch: string): boolean {
     return '0123456789_abcdefghijklmnopqrstuvwxyz'.includes(ch.toLowerCase());
 }
 
-const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'test', 'end test', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
+const keywords = ['dim', 'goto', 'gosub', 'return', 'exit', 'if', 'then', 'else', 'endif', 'end if', 'elseif', 'else if', 'while', 'wend', 'for', 'to', 'step', 'next', 'function', 'end function', 'test', 'end test', 'type', 'end type', 'each', 'local', 'global', 'field', 'const', 'select', 'case', 'default', 'end select', 'repeat', 'until', 'forever', 'data', 'read', 'restore', 'abs', 'sgn', 'mod', 'pi', 'true', 'false', 'int', 'float', 'str', 'include', 'dialect', 'new', 'delete', 'first', 'last', 'insert', 'before', 'after', 'null', 'object', 'handle', 'ptr', 'and', 'or', 'xor', 'not', 'shl', 'shr', 'sar'];
 
 export class BlitzToker {
     private input: string[];
