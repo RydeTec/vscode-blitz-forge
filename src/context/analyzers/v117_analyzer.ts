@@ -1302,7 +1302,7 @@ export class Blitz117Analyzer implements Analyzer {
                 if (this.toker.curr() == '(') {
                     this.toker.next();
                     while (this.toker.curr() != ')') {
-                        this.toker.next();
+                        this.parseExpr(context);
                     }
                     this.toker.next();
                 } else {

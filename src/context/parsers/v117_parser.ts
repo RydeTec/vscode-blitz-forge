@@ -1299,7 +1299,7 @@ export class Blitz117Parser implements Parser {
                 if (this.toker.curr() == '(') {
                     this.toker.next();
                     while (this.toker.curr() != ')') {
-                        this.toker.next();
+                        this.parseExpr(false);
                     }
                     this.toker.next();
                 } else {
