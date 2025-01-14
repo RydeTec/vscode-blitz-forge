@@ -10,7 +10,7 @@
         "type": "git",
         "url": "https://github.com/RydeTec/vscode-blitz-forge.git"
     },
-    "version": "0.9.3",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.75.0"
     },
@@ -179,7 +179,6 @@
                         "type": "string",
                         "description": "Version of the language syntax (BlitzForge version)",
                         "enum": [
-                            "Legacy",
                             "v1.117",
                             "v1.118 (soon)"
                         ],
@@ -286,8 +285,8 @@
         "typescript": "^5.7.2"
     },
     "dependencies": {
-        "@vscode/debugadapter": "^1.68.0",
-        "blitzforge": "file:",
+        "vscode-debugadapter": "^1.51.0",
+        "vscode-debugprotocol": "^1.51.0",
         "tree-kill": "^1.2.2"
     }
 }

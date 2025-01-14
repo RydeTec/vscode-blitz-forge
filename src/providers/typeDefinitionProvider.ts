@@ -48,7 +48,7 @@ export function getType(exp: string, location: vscode.Location): Type | undefine
         for (let i = 1; curr && i < parents.length; i++) {
             const parent = parents[i].toLowerCase();
             const field = curr.fields.find(f => f.ident == parent);
-            if (!field || '%#$'.includes(field.tag)) return; // TODO diag
+            if (!field || '%#$@'.includes(field.tag)) return; // TODO diag
             const type = parsed.structs.find(t => t.ident == field.tag);
             if (type) curr = type;
         }

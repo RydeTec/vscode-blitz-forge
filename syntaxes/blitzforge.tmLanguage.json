@@ -222,15 +222,15 @@
 			},
 			{
 				"name": "entity.name.function",
-				"match": "(?i)(?<=function\\s)\\w+\\s*(?=\\.|#|\\$|%|\\()"
+				"match": "(?i)(?<=function\\s)\\w+\\s*(?=\\.|#|\\$|%|@|\\()"
 			},
 			{
 				"name": "entity.name.method",
-				"match": "(?i)(?<=method\\s)\\w+\\s*(?=\\.|#|\\$|%|\\()"
+				"match": "(?i)(?<=method\\s)\\w+\\s*(?=\\.|#|\\$|%|@|\\()"
 			},
 			{
 				"name": "entity.name.test",
-				"match": "(?i)(?<=test\\s)\\w+\\s*(?=\\.|#|\\$|%|\\()"
+				"match": "(?i)(?<=test\\s)\\w+\\s*(?=\\.|#|\\$|%|@|\\()"
 			}
 			]
 		},

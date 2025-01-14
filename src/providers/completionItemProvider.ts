@@ -92,7 +92,7 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
             r.push({
                 label: {
                     label: fun.name,
-                    detail: ('%#$'.includes(fun.tag) ? '' : '.') + fun.tag,
+                    detail: ('%#$@'.includes(fun.tag) ? '' : '.') + fun.tag,
                     description: `${fun.kind == 'userlib' ? 'library' : 'user-defined'} function`
                 },
                 kind: vscode.CompletionItemKind.Function,
@@ -110,7 +110,7 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
                 for (const local of fun.locals) {
                     r.push(new vscode.CompletionItem({
                         label: local.name,
-                        detail: ('%#$'.includes(local.tag) ? '' : '.') + local.tag,
+                        detail: ('%#$@'.includes(local.tag) ? '' : '.') + local.tag,
                         description: local.kind == 'param' ? 'function parameter' : 'local variable'
                     }, vscode.CompletionItemKind.Variable));
                 }
@@ -121,7 +121,7 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
             r.push({
                 label: {
                     label: variable.name,
-                    detail: ('%#$'.includes(variable.tag) ? '' : '.') + variable.tag,
+                    detail: ('%#$@'.includes(variable.tag) ? '' : '.') + variable.tag,
                     description: 'global variable'
                 },
                 kind: vscode.CompletionItemKind.Variable,
@@ -133,7 +133,7 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
             r.push({
                 label: {
                     label: variable.name,
-                    detail: ('%#$'.includes(variable.tag) ? '' : '.') + variable.tag,
+                    detail: ('%#$@'.includes(variable.tag) ? '' : '.') + variable.tag,
                     description: 'constant'
                 },
                 kind: vscode.CompletionItemKind.Constant,
@@ -155,7 +155,7 @@ export default class CompletionItemProvider implements vscode.CompletionItemProv
             r.push({
                 label: {
                     label: array.name,
-                    detail: ('%#$'.includes(array.tag) ? '' : '.') + array.tag,
+                    detail: ('%#$@'.includes(array.tag) ? '' : '.') + array.tag,
                     description: 'dimmed array'
                 },
                 kind: vscode.CompletionItemKind.Variable,

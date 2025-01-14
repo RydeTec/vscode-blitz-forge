@@ -185,8 +185,8 @@ function loadUserLibs(): bb.DeclParseResult {
                     range: toker.range(),
                     severity: vscode.DiagnosticSeverity.Error
                 });
-                const tag = '%#$'.includes(toker.next()) ? toker.curr() : 'null';
-                if ('%#$'.includes(tag)) toker.next();
+                const tag = '%#$@'.includes(toker.next()) ? toker.curr() : 'null';
+                if ('%#$@'.includes(tag)) toker.next();
 
                 if (toker.curr() != '(') diagnostics.push({
                     message: `Syntax error: expecting '(' after function identifier, got ${toker.curr()}`,
@@ -200,7 +200,7 @@ function loadUserLibs(): bb.DeclParseResult {
                         if (toker.curr() != 'ident') break;
                         const pname = toker.text();
                         let maybe_tag = toker.next();
-                        if ('%#$*'.includes(maybe_tag)) toker.next();
+                        if ('%#$*@'.includes(maybe_tag)) toker.next();
                         else maybe_tag = '';
                         params.push({
                             name: pname,
