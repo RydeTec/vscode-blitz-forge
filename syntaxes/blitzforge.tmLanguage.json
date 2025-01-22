@@ -109,7 +109,7 @@
 			},
 			{
 				"name": "support.function.builtin.2d.system.bb",
-				"match": "(?i)\\b((show|hide)pointer|apptitle|commandline|systemproperty|(set|get)env|calldll|execfile|runtimeerror|end|functionptr|await|call|async|poll|asyncthen|refcount|recast|ptr|self)\\b"
+				"match": "(?i)\\b((show|hide)pointer|apptitle|commandline|systemproperty|(set|get)env|calldll|execfile|runtimeerror|end|functionptr|await|call|async|poll|asyncthen|refcount|recast|ptr|self|trycatch|throw)\\b"
 			},
 			{
 				"name": "support.function.builtin.2d.debug.bb",
