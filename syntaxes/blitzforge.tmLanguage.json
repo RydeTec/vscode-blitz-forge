@@ -21,7 +21,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.bb",
-				"match": "(?i)\\b(if|then|else|elseif|endif|select|case|default|end|repeat|until|forever|while|wend|for|to|step|next|exit|goto|gosub|return|function|dim|type|field|new|each|first|last|before|after|insert|delete|data|read|restore|include|null|test|method|strict|enablegc|disablegc|assert)\\b"
+				"match": "(?i)\\b(if|then|else|elseif|endif|select|case|default|end|repeat|until|forever|while|wend|for|to|step|next|exit|continue|goto|gosub|return|function|dim|type|field|new|each|first|last|before|after|insert|delete|data|read|restore|include|null|test|method|strict|enablegc|disablegc|assert)\\b"
 			},
 			{
 				"name": "constant.language.bool.bb",
@@ -189,7 +189,7 @@
 			},
 			{
 				"name": "support.function.builtin.3d.entity.state.bb",
-				"match": "(?i)\\b(entity(x|y|z|roll|yaw|pitch|class|name|pick|visible|distance)|countchildren|(get|find)child|linepick|delta(yaw|pitch)|tform(point|vector|normal|ed(x|y|z))|getmatelement)\\b"
+				"match": "(?i)\\b(entity(x|y|z|roll|yaw|pitch|class|name|pick|visible|distance)|entityscale(x|y|z)|countchildren|(get|find)child|linepick|delta(yaw|pitch)|tform(point|vector|normal|ed(x|y|z))|getmatelement)\\b"
 			},
 			{
 				"name": "support.function.builtin.3d.entity.collision.bb",
