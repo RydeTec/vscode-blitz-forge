@@ -78,9 +78,7 @@ See contributed settings in the `Feature Contributions` tab.
 - Type checking is limited as of now
 
 #### Build Instructions
-1. nvm use 22.10.0
-1. npm install
-1. npm run build
+1. Run `./compile.bat` in your terminal
 1. Open VSCode
 1. Press Ctrl+Shift+P
 1. Type "Install from VSIX"
